@@ -1,0 +1,20 @@
+<html>
+<head>
+	<title>Seach JobCan</title>
+	<script type="text/javascript">
+	  jurl='https://ssl.wf.jobcan.jp/#/requests/';
+	  function scjc(){
+		jid = document.getElementById("jobcanid").value;
+		if(!isNaN(jid) && jid != ''){
+		  window.open(jurl+jid);
+		}
+		document.getElementById("jobcanid").value = '';
+	  }
+	</script>
+</head>
+<body>
+	<label>JobCan Search:</label>
+	<input type="text"  maxlength="6" id="jobcanid" onblur="scjc();"></input>
+	<input type="button" value="search" onclick="scjc();"></input>
+</body>
+</html>
