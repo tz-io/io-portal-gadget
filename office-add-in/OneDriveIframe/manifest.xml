@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="TaskPaneApp">
+  <Id>7D986BA6-88FB-4951-A9EB-8070950A2F35</Id>
+  <Version>1.0</Version>
+  <ProviderName>kinuasa</ProviderName>
+  <DefaultLocale>ja-JP</DefaultLocale>
+  <DisplayName DefaultValue="Sample OneNote Add-in" />
+  <Description DefaultValue="OneNote用のOffice アドインです。" />
+  <Hosts>
+    <Host Name="Notebook" />
+  </Hosts>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://tz-io.github.io/io-portal-gadget/office-add-in/OneDriveIframe/index.html" />
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+</OfficeApp>
