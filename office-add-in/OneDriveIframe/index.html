@@ -1,182 +1,54 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
+<!-- This file shows how to design a first-run page that provides a welcome screen to the user about the features of the add-in. -->
+
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <title>OneDrive Iframe Add-in</title>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.3.min.js"></script>
-    <!-- <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script> -->
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-    <script>
-      Office.initialize = function(reason){}
-      $(function(){
-        //HTML挿入
-        //http://dev.office.com/reference/add-ins/onenote/outline#appendhtmlhtml-string
-        //http://dev.office.com/docs/add-ins/onenote/onenote-add-ins-page-content#supported-html
-        $("#btnAppendHtml").click(function(){
-          OneNote.run(function(context){
-            var page = context.application.getActivePage();
-            var outline = page.addOutline(10, 100, "");
-            return context.sync()
-            .then(function(){
-              //img要素挿入
-              outline.appendHtml('<img src="https://www.ka-net.org/images/logo.jpg" />');
-              return context.sync();
-            })
-            .catch(function(error){
-              console.log("Error:" + JSON.stringify(error));
-            });
-          });
-        });
-         
-        //画像挿入
-        //http://dev.office.com/reference/add-ins/onenote/outline#appendimagebase64encodedimage-string-width-double-height-double
-        $("#btnAppendImage").click(function(){
-          OneNote.run(function(context){
-            var page = context.application.getActivePage();
-            var outline = page.addOutline(10, 100, "");
-            return context.sync()
-            .then(function(){
-              outline.appendImage(getImageAsBase64());
-              return context.sync();
-            })
-            .catch(function(error){
-              console.log("Error:" + JSON.stringify(error));
-            });
-          });
-        });
-         
-        //テーブル挿入
-        //http://dev.office.com/reference/add-ins/onenote/outline#appendtablerowcount-number-columncount-number-values-string
-        $("#btnAppendTable").click(function(){
-          OneNote.run(function(context){
-            var page = context.application.getActivePage();
-            var outline = page.addOutline(10, 100, "");
-            return context.sync()
-            .then(function(){
-              //境界非表示
-              outline.appendTable(2, 2, [["あいうえお", "かきくけこ"], ["さしすせそ", "たちつてと"]]).hideBorder();
-              return context.sync();
-            })
-            .catch(function(error){
-              console.log("Error:" + JSON.stringify(error));
-            });
-          });
-        });
-      });
-       
-      //PNG画像をBase64文字列として取得
-      function getImageAsBase64(){
-        var ret = "iVBORw0KGgoAAAANSUhEUgAAAPoAAABQCAYAAAAwa2i1AAAAAXNSR0IArs4c6QAAAARnQU1BAACx";
-        ret += "jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAABW3SURBVHhe7Z1dkBXFFYB989HKg+WD5RMPlkX5";
-        ret += "wgMP+mBpVYqYVDQpUiaSECshatBKjD/EgCYR3fxJYmJiJImJkASiSRBSJBEkFioKpkAQFGRh+TG4";
-        ret += "/LiIK6sLKmhnvotn6enbM9M90zN372531S1dbt+enp75+pw+5/TpM1QscQTiCIz5EThjzN9hvME4";
-        ret += "AnEEVAQ9vgRxBMbBCETQx8FDjrcYRyCCHt+BOALjYAQi6OPgIcdbjCPQMdAH3nxPrdv6lvr3usPq";
-        ret += "jysOqF/87TX1vT/sUd/4+U71xbu3tT43/GyHuvN3u9XPHt3XqrP8ucPquS2Dqn/gePc9uZtuUuqM";
-        ret += "ZLj1T/fdRexxl45Ao6AD6J+fOKi+9cud6uM3b670uX5ebwv+vteGu2PoXUF/6KH2CcGcIFz+pp1Y";
-        ret += "4gh8NAK1gw6IC/59QH3lh9srgZ03MSD9H1zWr7btfWf0PtgI+uh9NuOgZ7WBjvSeu2BvbXBngX/r";
-        ret += "A32jU8pH0McBTqP3FoOD/sbR99WvlrymptxSTTWvqtr/6M+vdm4tv2tXOfWbyaDDqvszzzyjzj77";
-        ret += "bNXT06OOH2/OFnJTcu9nJEsS/htL+BEIBvq773/QWjN/ZvZLjUvxrEnhk7dtaan0Q8Mnwo9cXotl";
-        ret += "QWftffRoumUb+KtXp+vYrldyjQ7cs2bNakF35plnJvPOQ+rEifrHrwzo8+bNU9OmTVMDAwPNPt8u";
-        ret += "vFoQ0PfsP6a+3PPKqAHcBP+q725VL+4cau7xlAV9+vT2PjYMunRgw4YN6qyzzmoBP2HCBMXfVcrq";
-        ret += "ZHKirSofJh0KE49MRrS3YMGCKl0bF7+tDDousk/fvsUZ8m/+Yqc6dOS93M9Tmwad2zOh/ufaN9T8";
-        ret += "ZfvVp2al+8RSAldeI6Us6I8/PmpApyNI96uuumoEzirSMxToSO8pU6aMaBxr1qxp5JF2+0UqgY6r";
-        ret += "zHctfduvk/VrQdnc97Z3u/Tjxvt2jrR8ePB9Ne8v+9Qnbk0Dj7/+xMkPirpQ7/fbtrWv4c85B1E1";
-        ret += "qkCXzixatGgE9jlz5tQyNi6qO1CLljFp0qSosns8iVKgDx8/qXr++GopGOsEnQnCLPsPv6vuXpi2";
-        ret += "/mOZH3y7/nVn5nO444520LPW1A2p7rrEtfV706ZN6oorrqhtvZ4HOprFzJkzRyab+++/v7Z+eLDT";
-        ret += "VVW9QQdyotd8JbnUrwv02+fvzh34Xf3HFMsG6Qd+fTwEjZf+fpVYudKgI81NI5x0LDE4tUXUbdmS";
-        ret += "7nYAY1wR6HWPUxboK1asSNkK9uzZU3dXxmT73qCXleR1gw7IeeXkBx+qr/4oHbRDhF7javwNN7SD";
-        ret += "++ijp7q+apVSqMa6Cm/zvwO2XkY56BdffHElI5yrAW+XOS5jEtlyN+UFepk1uSn5P/+9ra21c95n";
-        ret += "zm93e2kMP170v9Tdv/VOu1r+j2cPW9skjr6xkvio26TzZZeduvyRI0qdd96p7xMrt2IdT4mgO08S";
-        ret += "EfTsN9kZdKzrNnX9c3dubTN45an1QMxaOu/z2DMDzqBjbGMdLmXvgeMti/sDj/WrI0OngH/72ElF";
-        ret += "P7P6tWxNA35YHWSJVUeF37HDDjTSnYLLzYxtN9X8Dkr0pUuXqokTJ6rdu/OXTi6TKRZ1LPviw8fw";
-        ret += "12TQjksfu7WOE+j4ybNcaEhm3FmuUviaH2wPKtEBWi93PrRnBGiAX/D4wRb0eZMPrrcXeo1AldBP";
-        ret += "9Morsw1wQK3DrEeHJWpv4a63DoI+d+7cFpjTbTEAjmMIzEBNgA5tVXHjOV5y3FUrBJ2It7xgGEAH";
-        ret += "IgAG+K//dEcuVNQvKq7utSu+89KI1KbNY+9+oG7+ZZ+zNqDDP/WOl+szzs2fbw+JTVxE6vnn08Y5";
-        ret += "1HddYpuGO8A3iyfoQEmY69q1a0daKmuM60+MiwLoNlluFD3gj74HcCzo8vtLLrlE9fX1Of46VvMZ";
-        ret += "gULQCWvNk4Y66Gtfeqt17SfWH1FXz91m/R1rdCzveZ+iyUL686eVh6z3SsDNl+7xj9S79y/ptb7P";
-        ret += "QGbW9Yld11V5GjyU3J+ptmPMqwj65MmTW5Jz/fr1lUGngTsSdyHtzZgxw2nIUNGJpRfAXY1ttnpx";
-        ret += "Xe405PnJIXE/FcWuAzpraqzaennvxIdq8apDCqmrTxShJDprbtbeWYXr/275fi/pjgrPMiVYwZru";
-        ret += "sndc6si6XDpgM96hHVQEXYDZu3dvENBZn0ubeWv1zZs3q6lTpzob11wmgAi629uaK9HZhVbkL88C";
-        ret += "FwhR5c3INMDnN6j6tI30Fq2Av1G9Xdb7TC5SmGSAWoxv8u/3/724/+b9kdEmSLH5v4ugR5XX/cQ2";
-        ret += "ld/c0EJnPVR3wBBjl36fZVV3aQNpTrtId70MDg62NsawVBBwdUleBlS5B9or8/sgz7fLGskEnf3k";
-        ret += "LltNiTozC6qzqO4YxHRVHJWaInCL+i3AofYXrdGZJJDYUsR1xrX+8K8DLUmP9d2cZIomLfm+0gYY";
-        ret += "tnYm8eGFktxce8skgGtNyuWXt7eDOl9Boq9KtAYAuRLjoFaqgr5u3bqRCeSoZmOQCYBrEr4K9KzN";
-        ret += "BfoyoEbQ/WeZTNBdk0bokW64uYhQ04ECejaxyCaTEKAzGUjBAMe6X7/mZ+e83BYc4wo59chVV7rc";
-        ret += "e287nIB/7bXpf8eohqpuAo+6TiGCztQAbIY46hIpZ9bNCKllayeQYS0PCTptnX/++a22iY2XwgSA";
-        ret += "ke3pp59Oha1G0Eu/YaV+aAWd9E+uYAA60hU3lg6z+K2JRkO1RnLTZlXQ0Q5MewBGQFkKuPa7qB5x";
-        ret += "A6UKUW0EwQAeEMtLbwa+CLRYqiVQRndR2Yx4LAdsBXXeEXQkOZAtX768EuhIVST01VdfPdIOFnTa";
-        ret += "vhxNpKC4rL9d6pTRCIr6Nha/t4JOjrciEOR7wNUhQ11m59iTL7w50sYjT77emgyoWxX0/26z+7uB";
-        ret += "ny2qpnR3vQ+zHhlqSheCYBIpllpvZ4HORQimSTaMtKQ4hclC4NcBznJfmX54fvPww23dR6W2GeKo";
-        ret += "6Ku6i/pMeKsU3GsEz8i+8bzxc4HYpU4E3e0ttYJeJpEjhi9Zl/P/FPFpI+lR31HjmQheeXW41Brd";
-        ret += "3BCD2m6W9duHnCepvEmAAKGgcfB5oJs3gbQ1JXSelHTZ4abBjIptlhCgu71yp2pF1d1ntKrXbQMd";
-        ret += "I5yvFGRNTHy5njACmHWDGBFrFGBFnSc+nev4GONe3nM6yyv2ACz4LBl0Nxt70n37n1U/aLScK+hZ";
-        ret += "0tyWlEKevy0eXtb62jsihjFzfV5GopNbDlh1ie7zOkbQfUaret020MtuXJGNJWKMAzjUaVxsAhJr";
-        ret += "aXaZIdVlPe8K+vcf3pu6W90lx0TD8uDx548Eg5w+k6QiWHEF3eZSu/DC/G4goU0NwLKTi7h0DGN6";
-        ret += "oIw07CvRWeNH0IO9HbU31AZ6lcMVNu4YUvtef3fErcWaGfVaVHr+y9+6f9sFdCYG2pXCBFI21NVH";
-        ret += "2n/hrq3hHoAL6KztbW43LYIt1SGk/8KFdleeZ0JH4Bcpy4Rw+LA97dbQ0JDq7e1VFyaTD/UvvfTS";
-        ret += "UmPksv52qRPX6G7DnwKdY5J8QDDrin8bXzbfIWkJYtFVeiQ8aj7fuaruWUE5GPzKhLr63OPLu9qz";
-        ret += "1rgNrVGrCHTb7jakdJKRtVV88tAlIa6+hYSL5yQJMFzg0uugCZQpvtfJqh9Bdxv9FOhZW1F9wEBC";
-        ret += "61LcVOmRzqjvEuRSJNFR8bHiZxUJtfXpo0/dYFtY80DXXXK6Cq5vcCEIpSiyTr4vmRud7C2EqF5w";
-        ret += "wQWZwBPhxvfUq5IZNq7R3QANVSsFOllSfSCw1QVM1GxdimNE01V6Ujqhfl97b2+hMY7QVr2wFjdD";
-        ret += "XbOSSlS9F36PqzFIyQIdyNkMYkJsbnChE1nRdOZvs1T9IDcSG+nGEUiBXrRTzRUccYOJYU6CZrCQ";
-        ret += "Sxus31nT50l01Hvdoi6Th+wz5zs+sgxw7Z9PvWA72vIkui0u3qYS2/amm5DbNr1045sZ+xx0BFKg";
-        ret += "Y2X2gSCvLpIXmKUOQCPVJWIOOHG/mbHtrO8lwwwTBt/Lx4x+ow094WOovuvtzP5NoE0uRWt0HXbJ";
-        ret += "IWc+alu+OUBPItQSXVolunTQlyM2NnZGIAU655PXAUs3t8nxzEFKEehcBNjjqSNBhjs2kh6BFOhV";
-        ret += "0jgLzH9bPVB4EkvRSS1lvjdzt4eaXDjOKZY4At0+AinQOWe8KiD6zrImB0cPoKl6D+bvm7yPeK04";
-        ret += "AnWMQAp0AkSqQhJBr+MxxTbjCFQbgRTo7MOuCjqhqhjemv645pnzvT+SRsYSR6DbRyAFOmmUfEEY";
-        ret += "6/W/9pPt3f6MY//jCKSTQ3JqyVgH1/f+vv1g8emv4+49IqkkLr0kQk5dc41S99yj1Isvtg+DSy47";
-        ret += "W52SYbXj7jl43HAtATO679zHgm7bX553L3Ua4OQeggXMeDyUUV/Vlp3Wlv0mgj5qHmUK9OXPVQ+B";
-        ret += "1SWmGb4a+q6b2MH2+38GCoENffOdbI/sNWZEXlYwj2t8flG9rGOlOzkOXXTtFOjPbRkMqrrbMsSG";
-        ret += "HJusQyJ81fO8+kueej1kl8dGWzaobfAXwevzfQS90ruTAr1Mdpk8SEg+UVdhU0xIoLPaCpplpq7B";
-        ret += "aLpdznPXISXxhS1BpQ/IRXUj6JWeclviCUI+QwFEXHtdhbj5UP3MagfXWtC8cXUNRpPt2lJLkzo6";
-        ret += "gt7kU/C+VhvoPhlgXUDzNbC53kGoJJB59xANcZan4ZiIsvXLaIxzfZ1rr9cGuk9OdxfQ2aFWR9F3";
-        ret += "xrn0o0wdbBaxGCNgHv/MHnnPtFWdHFNSUVfJdWfrO2muJZHGeUmyELL1jLZiTfccIuZdwMrKw151";
-        ret += "ICRdVRmAXX7zydu2KI6MjkUbAdvprpLNpm7VPeuUGs8HVAfocpqs5NF71NhmfFMyRj6ps1zy4nve";
-        ret += "tv001QeX9Qdb/5L9pY5S1241mQTYshuLMQK202GTI5daZZyCfiTJ9cehkeTb40w5JDp/8+9SRi3o";
-        ret += "JER0kXouderypYfM3267j9Ub34ycmyNgHvr4sY8ptfMjz0qHQCevvI+0LFs3S8rOSpJ36kdcSdrs";
-        ret += "yziWy7PIhNCYRKd/tz7QFwT2unzpkqnGZbLxrfPlnleitd18SW2HPuISE7eXDXTPF71M9U6CLimy";
-        ret += "zZNpZXnAgZY+pSOghzLK1eFLJ0+cL7w+9aMRzvJ6JgcoWrPQFoHukueuyIfumNW2jvV3FqicY4ea";
-        ret += "zkdX06U+p+FMmzZNUU/65apNNCrR6TAHDfoAYqtbhy+ddNFV+5X1ew6wiMUyArbTYFwk+hgFHenL";
-        ret += "WnwHh24UlFEPOpFyWJ+rQhXal87RTlX7lPX7YAc2FD39bvo+b/09DiW6nDGfZ2QrcyZdR1R3eQ9D";
-        ret += "WOBD+9LJS1cH6NHSnjH7mEY4XdX2BV0PZdXb0d1n5sQyilR3VHHOr8Popp9XZ6rlXQf60PAJRYLE";
-        ret += "KmCF9qU/8Fg495/cF8cko8HEYoyALeR1HIOe9X5knTxT1VhY9sgrs5/WgBmz0os7h9SUWzaXhj20";
-        ret += "L50jmKtMPLbf/mfDab9nhF0bgenT84+C8pXoRYY32/eOEv3hZAcdwLF2JlqtyTImQGfAqhzXFNqX";
-        ret += "zlFOIUEPduxSk29WE9cqkuajzBi3cePGWnzqLgc5ljlLTqR9KKmd90o4SXRpoOxJLqF96XK2egjY";
-        ret += "yZMXd6hlvCL33ZeW5raz37Ikuqy5G7S6cxdYuDkI0tWV5VLPBJ2/XX6HcY3y7LPPqosuuqjNDZcH";
-        ret += "Or8N6WbzAh0gygTShPSlc8BiCMBp4ys/3K6Gj59sQjZ27zUWLToNu+2MOF/QazTGNTXIvqCvWrWq";
-        ret += "NTEQLadveBHQiZWXwvcSbXdWkpdv9+4wR4J5gU5nBt8+oYgc84EtpC/9lVeHva6d1U8MjNH45ojG";
-        ret += "pk1KXX99/rZTMw4+S6J3EHSOhUay1qEqF6nu4joTKc/I64Y6gCZWfsqUKa1JYcKECWpgYMDxARVX";
-        ret += "8wadJt84+r4isMQH9lC+9CdfeNPrurY+Iskj5MUvR1uNvP3l5j51MaCZqnsHQRfYXANdfEaoCHQk";
-        ret += "9cSJE9WKFStGmtVBnzRpUivKjnZmzpzZgj5kKQU6HUCN90kPHcqXvnjVoUqgsyaP6nrJVygP9GRz";
-        ret += "RypElqwzp8RWvtXexQrvaHXX70pXr2WNDWyoz8DEltKsfeN9fX3J4bRTM9fIw8PDSabrC5Qe426C";
-        ret += "Pj3xViCV84qAfkOSg0+8Baj5dZTSoEtnlq0ZcHK9hfKl3/fX8rnnsa5Hw1uF1ygPdNMNJ5K7AdAB";
-        ret += "FgPc5MmT1SH2zCfFBjr/joqMRAcsXY3WR0UPhMlS87kW7UgxQT8/CRk2N7tQl+UDATf9ySYh3RjH";
-        ret += "xEAbIQ1w+j1VBp3GSKBIfjUfVb7JugTDRD95BcDlp3mgm7HwcghDA6CvS/bEAwl7wk939bRl3LSa";
-        ret += "Ay8bTg4cyE7lLWo+bdo2rYgU3sthFknRQSd6jr/13Wust+fMmdP6d9bhtKmDzt+iuvvuenN5skFA";
-        ret += "50Ks28mxViWwpg74CWuN63GXV8GhThboyYvdtrONupQG1uiS4UWX0FkSPesugR+t4B5OnUkKWoKA";
-        ret += "Z9tbPn/+/Ba0omrroMv2Vb4TwEWL6OnpGVkymO41NshIPdbpIVNSBQNdBnDP/mNqNJzhhrEwblBx";
-        ret += "gNenShbo69enQdcka92gAwNSF9CQ7C4S3XbLoq7rk4UAa1Opgfjcc89VjzzySJtEX7ZsWas/SHu2";
-        ret += "q/L/TBobNmxIXdrmR9eXDRjo9u3b5/OEMusGB12uRNhsiNNZfaU8rr+4nzzIu9HeSBboiXRLSXTW";
-        ret += "61LKSPSFC9Pt5RjjFiV+flHbdQnoK9FFQpvrdgEVSZvn086yujNZoLLbrOhZATNMWCLZUfNDlNpA";
-        ret += "l84BHfvaWSf7Qutan620qOikf4rGthCvRUYbWaCbmWH15Ig+oGcd65QBOmthkeamEUsHHYgHBwet";
-        ret += "N8W/9/b2jqjpJuisnZHcS5cuTcHK7w4ePNj67cqVK0fW6Nddd13LIo/FPcvYR0ck1xwThM3ghyTH";
-        ret += "aGezD5R5wrWDLp0CQIx2uOS+cFe13XBMABj/sAkwkcRsrWUefYnf2EC3RcuRdqqMRDc1A3G94bqz";
-        ret += "FKQkgOOfBnqzyBrbJVxV6ixZsqRwYLCou7Rpgi5ag/nbUNFveR1vDHSzE6yfcc3h8gLY2b/ZrTgl";
-        ret += "Rt8SC8ycT87RxdThwEPOQmPCiJK78H0MX8EGOnDiSpM4+Bkz0tf1kejLl9t97tgAShSkIv5wpGse";
-        ret += "mEhs3GUsA1wKbjPCU5HcfG688UY1e/ZstXjx4pZ0R8oj7c1CGmi9H7RhpoZ2uX6ZOh0DvUxn4286";
-        ret += "PAJ57jXCNROXVWIRKw+6adRLAEzM2h2+6bFx+Qj62HiO8S7iCOSOQAQ9viBxBMbBCETQx8FDjrcY";
-        ret += "R+D/JDbWUBz6Y3oAAAAASUVORK5CYII=";
-        return ret;
-      }
-    </script>
-  </head>
-  <body>
-    <h4>OneNote-Add-in Sample</h4>
-    <p>
-      <input id="btnAppendHtml" type="button" value="appendHtml">
-      <input id="btnAppendImage" type="button" value="appendImage">
-      <input id="btnAppendTable" type="button" value="appendTable">
-    </p>
-  </body>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contoso Task Pane Add-in</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+
+    <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="ms-font-m ms-welcome ms-Fabric">
+    <header class="ms-welcome__header ms-bgColor-neutralLighter">
+        <img width="90" height="90" src="../../assets/logo-filled.png" alt="Contoso" title="Contoso" />
+        <h1 class="ms-font-su">Welcome</h1>
+    </header>
+    <section id="sideload-msg" class="ms-welcome__main">
+        <h2 class="ms-font-xl">Please sideload your add-in to see app body.</h2>
+    </section>
+    <main id="app-body" class="ms-welcome__main" style="display: none;">
+        <h2 class="ms-font-xl"> Discover what Office Add-ins can do for you today! </h2>
+        <ul class="ms-List ms-welcome__features">
+            <li class="ms-ListItem">
+                <i class="ms-Icon ms-Icon--Ribbon ms-font-xl"></i>
+                <span class="ms-font-m">Achieve more with Office integration</span>
+            </li>
+            <li class="ms-ListItem">
+                <i class="ms-Icon ms-Icon--Unlock ms-font-xl"></i>
+                <span class="ms-font-m">Unlock features and functionality</span>
+            </li>
+            <li class="ms-ListItem">
+                <i class="ms-Icon ms-Icon--Design ms-font-xl"></i>
+                <span class="ms-font-m">Create and visualize like a pro</span>
+            </li>
+        </ul>
+        <p class="ms-font-l">Modify the source files, then click <b>Run</b>.</p>
+        <div role="button" id="run" class="ms-welcome__action ms-Button ms-Button--hero ms-font-xl">
+            <span class="ms-Button-label">Run</span>
+        </div>
+    </main>
+</body>
+
 </html>
