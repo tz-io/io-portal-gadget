@@ -29,11 +29,11 @@ function setPassword(id)
 <form>
 <fieldset>
 <legend>パスワード生成ルール</legend>
-<input type="checkbox" id="rule_numeric" checked>数字
-<input type="checkbox" id="rule_uppercase" checked>英大文字
-<input type="checkbox" id="rule_lowercase" checked>英小文字
-<input type="checkbox" id="rule_symbol" checked>記号<br>
-長さ<input type="number" id="rule_length">
+<input type="checkbox" id="rule_numeric" checked />数字
+<input type="checkbox" id="rule_uppercase" checked />英大文字
+<input type="checkbox" id="rule_lowercase" checked />英小文字
+<input type="checkbox" id="rule_symbol" checked />記号<br />
+長さ<input type="number" id="rule_length" value="12" />
 </fieldset>
 <p>
 <input type="button" onclick="setPassword('passwd');" value="パスワード生成">
