@@ -1,0 +1,44 @@
+<html><body>
+<script>
+let password_numeric = '1234567890';
+let password_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let password_lowercase = 'abcdefghijklmnopqrstuvwxyz';
+let password_symbol = '!"#$%&()=~|@[];:+-*<>?_>.,\'';
+
+function genPassword(length = 20)
+{
+	let password = '';
+	let password_base = '';
+	//生成ルールの確認
+	if (document.getElementById('rule_numeric').checked) password_base += password_numeric;
+	if (document.getElementById('rule_uppercase').checked) password_base += password_uppercase;
+	if (document.getElementById('rule_lowercase').checked) password_base += password_lowercase;
+	if (document.getElementById('rule_symbol').checked) password_base += password_symbol;
+	for (let i = 0; i < length; i++) {
+		password += password_base.charAt(Math.floor(Math.random() * password_base.length));
+	}
+	return password;
+}
+function setPassword(id)
+{
+	let rule_length = document.getElementById('rule_length').value;
+	document.getElementById(id).value = genPassword(rule_length);
+}
+</script>
+
+<form>
+<fieldset>
+<legend>パスワード生成ルール</legend>
+<input type="checkbox" id="rule_numeric" checked>数字
+<input type="checkbox" id="rule_uppercase" checked>英大文字
+<input type="checkbox" id="rule_lowercase" checked>英小文字
+<input type="checkbox" id="rule_symbol" checked>記号<br>
+長さ<input type="number" id="rule_length">
+</fieldset>
+<p>
+<input type="button" onclick="setPassword('passwd');" value="パスワード生成">
+<input type="text" id="passwd">
+</p>
+</form>
+
+</body></html>
