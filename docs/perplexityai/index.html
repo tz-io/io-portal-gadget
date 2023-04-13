@@ -1,0 +1,20 @@
+<html>
+<head>
+	<title>Perplexity.ai Search</title>
+	<script type="text/javascript">
+	  jurl='https://www.perplexity.ai/search?q=';
+	  function ppai(){
+		queryString = document.getElementById("query").value;
+		if(!isNaN(query) && query != ''){
+		  window.open(encodeURI('日本語で回答してください。')+encodeURI(queryString));
+		}
+		document.getElementById("query").value = '';
+	  }
+	</script>
+</head>
+<body>
+	<label style="color: #ffffff;">JobCan Search:</label>
+	<input type="text" style="box-sizing: border-box;" id="query" onblur="scjc();"></input>
+	<input type="button" value="search" onclick="ppai();"></input>
+</body>
+</html>
