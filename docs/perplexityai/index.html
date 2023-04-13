@@ -5,7 +5,7 @@
 	  jurl='https://www.perplexity.ai/search?q=';
 	  function ppai(){
 		queryString = document.getElementById("query").value;
-		if(!isNaN(query) && query != ''){
+		if(!isNaN(queryString) && queryString != ''){
 		  window.open(encodeURI('日本語で回答してください。')+encodeURI(queryString));
 		}
 		document.getElementById("query").value = '';
