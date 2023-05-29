@@ -1,1 +1,26 @@
-XXX
+<html>
+
+<head>
+  <title>Perplexity.ai Search</title>
+  <script type="text/javascript">
+    url = 'https://www.perplexity.ai/search?q=';
+    function ppai() {
+      queryString = document.getElementById("query").value;
+      if (queryString != '') {
+        window.open(url + encodeURI('日本語で回答してください。') + encodeURI(queryString));
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div>
+    <label style="color: #ffffff;">それAIに聞いてみよう</label><br />
+    <textarea rows="10" cols="50" id="query" onblur="ppai();"></textarea>
+    <div style="text-align: right;">
+      <input type="button" value="ask Perplexity.AI" onclick="ppai();"></input>
+    </div>
+  </div>
+</body>
+
+</html>
