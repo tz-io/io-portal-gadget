@@ -6,33 +6,46 @@
     <title>MS Graph API Sample</title>
     <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
     <script>
-        // MSAL Configuration
-        const msalConfig = {
-            auth: {
-                clientId: "YOUR_CLIENT_ID", // Azureポータルで取得したクライアントID
-                authority: "https://login.microsoftonline.com/common", // 認証のためのエンドポイント
-                redirectUri: "http://localhost" // サーバーが不要でも動作するリダイレクトURI
+        // Cookieから値を取得する関数
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // MSALインスタンスとGraph API設定を初期化する関数
+        function initializeMSAL() {
+            const clientId = getCookie("clientId"); // クライアントIDをCookieから取得
+            const tenantId = getCookie("tenantId"); // テナントIDをCookieから取得
+
+            if (!clientId || !tenantId) {
+                alert("クライアントIDまたはテナントIDがCookieに存在しません。");
+                throw new Error("Missing clientId or tenantId in cookies.");
             }
-        };
 
-        // MSALインスタンスを作成
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
+            // MSAL Configuration
+            return new msal.PublicClientApplication({
+                auth: {
+                    clientId: clientId,
+                    authority: `https://login.microsoftonline.com/${tenantId}`,
+                    redirectUri: "http://localhost"
+                }
+            });
+        }
 
-        // MS Graph API エンドポイント
-        const graphConfig = {
-            graphMeEndpoint: "https://graph.microsoft.com/v1.0/me"
-        };
-
-        // サインインしてトークンを取得
+        // MS Graph API呼び出し処理
         async function signInAndFetchData() {
             try {
-                // サインイン処理（ポップアップ方式）
+                const msalInstance = initializeMSAL();
+
+                // サインイン処理
                 const loginResponse = await msalInstance.loginPopup({
-                    scopes: ["User.Read"] // 必要なスコープ
+                    scopes: ["User.Read"]
                 });
                 console.log("id_token acquired:", loginResponse);
 
-                // アクセストークンの取得
+                // アクセストークン取得
                 const tokenResponse = await msalInstance.acquireTokenSilent({
                     scopes: ["User.Read"],
                     account: loginResponse.account
@@ -41,7 +54,7 @@
                 console.log("Access Token acquired:", accessToken);
 
                 // MS Graph API呼び出し
-                const graphResponse = await fetch(graphConfig.graphMeEndpoint, {
+                const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -49,10 +62,11 @@
                 const userData = await graphResponse.json();
                 console.log("Graph API Response:", userData);
 
-                // ユーザー情報を表示
+                // 結果を表示
                 document.getElementById("result").innerText = JSON.stringify(userData, null, 2);
             } catch (error) {
                 console.error("Error during sign-in or data fetching:", error);
+                alert("エラーが発生しました。詳細はコンソールを確認してください。");
             }
         }
     </script>
