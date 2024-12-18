@@ -13,16 +13,11 @@
             if (parts.length === 2) return parts.pop().split(';').shift();
             return null;
         }
-        
-        // クッキーを設定する関数
-        function setCookie(name, value) {
-            document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
-        }
-        
+
         // MSALインスタンスとGraph API設定を初期化する関数
         function initializeMSAL() {
-            const clientId = getCookie("clientId"); // クライアントIDをCookieから取得
-            const tenantId = getCookie("tenantId"); // テナントIDをCookieから取得
+            const clientId = getCookie("clientId");
+            const tenantId = getCookie("tenantId");
 
             if (!clientId || !tenantId) {
                 alert("クライアントIDまたはテナントIDがCookieに存在しません。");
@@ -39,46 +34,70 @@
             });
         }
 
-        // MS Graph API呼び出し処理
-        async function signInAndFetchData() {
+        // MS Graph API: 指定されたスレッドから直近のメッセージを取得する関数
+        async function fetchThreadMessages(accessToken, threadId) {
+            try {
+                const graphResponse = await fetch(`https://graph.microsoft.com/v1.0/teams/${threadId}/messages`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+
+                if (!graphResponse.ok) {
+                    throw new Error(`HTTP error! status: ${graphResponse.status}`);
+                }
+
+                const messagesData = await graphResponse.json();
+                return messagesData.value; // メッセージ一覧を返す
+            } catch (error) {
+                console.error("Error fetching thread messages:", error);
+                throw error;
+            }
+        }
+
+        // 認証とデータ取得のメイン処理
+        async function signInAndFetchMessages() {
             try {
                 const msalInstance = initializeMSAL();
 
                 // サインイン処理
                 const loginResponse = await msalInstance.loginPopup({
-                    scopes: ["User.Read"]
+                    scopes: ["User.Read", "ChannelMessage.Read.All"] // 必要スコープ
                 });
                 console.log("id_token acquired:", loginResponse);
 
                 // アクセストークン取得
                 const tokenResponse = await msalInstance.acquireTokenSilent({
-                    scopes: ["User.Read"],
+                    scopes: ["User.Read", "ChannelMessage.Read.All"],
                     account: loginResponse.account
                 });
                 const accessToken = tokenResponse.accessToken;
                 console.log("Access Token acquired:", accessToken);
 
-                // MS Graph API呼び出し
-                const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                });
-                const userData = await graphResponse.json();
-                console.log("Graph API Response:", userData);
+                // スレッドID
+                const threadId = "19:ae947f62d8304c2ebf4d949f6b401388@thread.tacv2";
 
-                // 結果を表示
-                document.getElementById("result").innerText = JSON.stringify(userData, null, 2);
+                // スレッドメッセージを取得
+                const messages = await fetchThreadMessages(accessToken, threadId);
+
+                // メッセージを画面に表示
+                const resultElement = document.getElementById("result");
+                resultElement.innerHTML = "";
+                messages.forEach(message => {
+                    const messageElement = document.createElement("p");
+                    messageElement.textContent = `[${message.from?.user?.displayName || "Unknown"}]: ${message.body.content}`;
+                    resultElement.appendChild(messageElement);
+                });
             } catch (error) {
-                console.error("Error during sign-in or data fetching:", error);
+                console.error("Error during sign-in or fetching messages:", error);
                 alert("エラーが発生しました。詳細はコンソールを確認してください。");
             }
         }
     </script>
 </head>
 <body>
-    <h1>MS Graph API Sample</h1>
-    <button onclick="signInAndFetchData()">Sign In and Fetch Data</button>
-    <pre id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></pre>
+    <h1>MS Graph API: Fetch Messages</h1>
+    <button onclick="signInAndFetchMessages()">Sign In and Fetch Messages</button>
+    <div id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></div>
 </body>
 </html>
