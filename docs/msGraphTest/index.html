@@ -13,7 +13,12 @@
             if (parts.length === 2) return parts.pop().split(';').shift();
             return null;
         }
-
+        
+        // クッキーを設定する関数
+        function setCookie(name, value) {
+            document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+        }
+        
         // MSALインスタンスとGraph API設定を初期化する関数
         function initializeMSAL() {
             const clientId = getCookie("clientId"); // クライアントIDをCookieから取得
