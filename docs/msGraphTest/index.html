@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS Graph API: Fetch Messages by ParentMessageId</title>
+    <title>MS Graph API Sample</title>
     <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
     <script>
         // Cookieから値を取得する関数
@@ -34,10 +34,10 @@
             });
         }
 
-        // MS Graph API: 指定されたメッセージとその返信を取得する関数
-        async function fetchMessageAndReplies(accessToken, chatId, messageId) {
+        // MS Graph API: 指定されたチャット（スレッド）からメッセージを取得する関数
+        async function fetchChatMessages(accessToken, chatId) {
             try {
-                const graphResponse = await fetch(`https://graph.microsoft.com/v1.0/chats/${chatId}/messages/${messageId}/replies`, {
+                const graphResponse = await fetch(`https://graph.microsoft.com/v1.0/chats/${chatId}/messages`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -47,16 +47,16 @@
                     throw new Error(`HTTP error! status: ${graphResponse.status}`);
                 }
 
-                const repliesData = await graphResponse.json();
-                return repliesData.value; // メッセージの返信を返す
+                const messagesData = await graphResponse.json();
+                return messagesData.value; // メッセージ一覧を返す
             } catch (error) {
-                console.error("Error fetching message replies:", error);
+                console.error("Error fetching chat messages:", error);
                 throw error;
             }
         }
 
         // 認証とデータ取得のメイン処理
-        async function signInAndFetchReplies() {
+        async function signInAndFetchMessages() {
             try {
                 const msalInstance = initializeMSAL();
 
@@ -74,31 +74,30 @@
                 const accessToken = tokenResponse.accessToken;
                 console.log("Access Token acquired:", accessToken);
 
-                // チャットIDと親メッセージIDを指定
+                // チャットID
                 const chatId = "19%3Aae947f62d8304c2ebf4d949f6b401388%40thread.tacv2";
-                const parentMessageId = "1732262751351";
 
-                // メッセージとその返信を取得
-                const replies = await fetchMessageAndReplies(accessToken, chatId, parentMessageId);
+                // チャットメッセージを取得
+                const messages = await fetchChatMessages(accessToken, chatId);
 
                 // メッセージを画面に表示
                 const resultElement = document.getElementById("result");
-                resultElement.innerHTML = `<h2>Replies for Message ID: ${parentMessageId}</h2>`;
-                replies.forEach(reply => {
-                    const replyElement = document.createElement("p");
-                    replyElement.textContent = `[${reply.from?.user?.displayName || "Unknown"}]: ${reply.body.content}`;
-                    resultElement.appendChild(replyElement);
+                resultElement.innerHTML = "";
+                messages.forEach(message => {
+                    const messageElement = document.createElement("p");
+                    messageElement.textContent = `[${message.from?.user?.displayName || "Unknown"}]: ${message.body.content}`;
+                    resultElement.appendChild(messageElement);
                 });
             } catch (error) {
-                console.error("Error during sign-in or fetching replies:", error);
+                console.error("Error during sign-in or fetching messages:", error);
                 alert("エラーが発生しました。詳細はコンソールを確認してください。");
             }
         }
     </script>
 </head>
 <body>
-    <h1>MS Graph API: Fetch Replies for Parent Message</h1>
-    <button onclick="signInAndFetchReplies()">Sign In and Fetch Replies</button>
+    <h1>MS Graph API: Fetch Chat Messages</h1>
+    <button onclick="signInAndFetchMessages()">Sign In and Fetch Messages</button>
     <div id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></div>
 </body>
 </html>
