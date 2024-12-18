@@ -10,3 +10,7 @@
   - https://tz-io.github.io/io-portal-gadget/docs/perplexityai/multiline.html
 - VoiceRecord
   - https://tz-io.github.io/io-portal-gadget/docs/voicerecord/index.html
+- MS Graph Test
+  - https://tz-io.github.io/io-portal-gadget/docs/msGraphTest/config.html
+  - https://tz-io.github.io/io-portal-gadget/docs/msGraphTest/index.html
+    
