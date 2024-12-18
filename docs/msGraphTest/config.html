@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>クライアントID入力</title>
+    <title>クライアントIDとテナントID入力</title>
 </head>
 <body>
-    <h1>クライアントIDを入力してください</h1>
-    <form id="clientIdForm">
+    <h1>クライアントIDとテナントIDを入力してください</h1>
+    <form id="idForm">
         <label for="clientId">クライアントID:</label>
         <input type="text" id="clientId" name="clientId" required>
+        <br><br>
+        <label for="tenantId">テナントID:</label>
+        <input type="text" id="tenantId" name="tenantId" required>
+        <br><br>
         <button type="submit">保存</button>
     </form>
 
@@ -20,16 +24,19 @@
         }
 
         // フォームの送信イベントを監視
-        document.getElementById("clientIdForm").addEventListener("submit", function(event) {
+        document.getElementById("idForm").addEventListener("submit", function(event) {
             event.preventDefault(); // デフォルトのフォーム送信を防止
 
             const clientId = document.getElementById("clientId").value.trim();
+            const tenantId = document.getElementById("tenantId").value.trim();
 
-            if (clientId) {
+            if (clientId && tenantId) {
                 setCookie("clientId", clientId);
-                alert("クライアントIDが保存されました!");
+                setCookie("tenantId", tenantId);
+                alert("クライアントIDとテナントIDが保存されました!");
+                window.location.href = "./index.html"; // index.html にリダイレクト
             } else {
-                alert("クライアントIDを入力してください。");
+                alert("両方のフィールドを入力してください。");
             }
         });
     </script>
