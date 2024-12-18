@@ -34,10 +34,10 @@
             });
         }
 
-        // MS Graph API: 指定されたスレッドから直近のメッセージを取得する関数
-        async function fetchThreadMessages(accessToken, threadId) {
+        // MS Graph API: 指定されたチャット（スレッド）からメッセージを取得する関数
+        async function fetchChatMessages(accessToken, chatId) {
             try {
-                const graphResponse = await fetch(`https://graph.microsoft.com/v1.0/teams/${threadId}/messages`, {
+                const graphResponse = await fetch(`https://graph.microsoft.com/v1.0/chats/${chatId}/messages`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -50,7 +50,7 @@
                 const messagesData = await graphResponse.json();
                 return messagesData.value; // メッセージ一覧を返す
             } catch (error) {
-                console.error("Error fetching thread messages:", error);
+                console.error("Error fetching chat messages:", error);
                 throw error;
             }
         }
@@ -62,23 +62,23 @@
 
                 // サインイン処理
                 const loginResponse = await msalInstance.loginPopup({
-                    scopes: ["User.Read", "ChannelMessage.Read.All"] // 必要スコープ
+                    scopes: ["User.Read", "Chat.Read"] // 必要スコープ
                 });
                 console.log("id_token acquired:", loginResponse);
 
                 // アクセストークン取得
                 const tokenResponse = await msalInstance.acquireTokenSilent({
-                    scopes: ["User.Read", "ChannelMessage.Read.All"],
+                    scopes: ["User.Read", "Chat.Read"],
                     account: loginResponse.account
                 });
                 const accessToken = tokenResponse.accessToken;
                 console.log("Access Token acquired:", accessToken);
 
-                // スレッドID
-                const threadId = "19:ae947f62d8304c2ebf4d949f6b401388@thread.tacv2";
+                // チャットID
+                const chatId = "19%3Aae947f62d8304c2ebf4d949f6b401388%40thread.tacv2";
 
-                // スレッドメッセージを取得
-                const messages = await fetchThreadMessages(accessToken, threadId);
+                // チャットメッセージを取得
+                const messages = await fetchChatMessages(accessToken, chatId);
 
                 // メッセージを画面に表示
                 const resultElement = document.getElementById("result");
@@ -96,7 +96,7 @@
     </script>
 </head>
 <body>
-    <h1>MS Graph API: Fetch Messages</h1>
+    <h1>MS Graph API: Fetch Chat Messages</h1>
     <button onclick="signInAndFetchMessages()">Sign In and Fetch Messages</button>
     <div id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></div>
 </body>
