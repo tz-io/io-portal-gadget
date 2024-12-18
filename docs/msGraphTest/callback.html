@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Callback</title>
+    <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
+    <script>
+        // MSAL Configuration
+        const msalConfig = {
+            auth: {
+                clientId: "YOUR_CLIENT_ID", // Azureポータルで取得したクライアントID
+                authority: "https://login.microsoftonline.com/common", // 必要に応じてテナントIDを含む
+                redirectUri: "https://tz-io.github.io/io-portal-gadget/docs/msGraphTest/" // リダイレクトURI
+            }
+        };
 
+        // MSALインスタンスを作成
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        // リダイレクトレスポンスを処理
+        msalInstance.handleRedirectPromise()
+            .then((response) => {
+                if (response) {
+                    console.log("Redirect response:", response);
+
+                    // アクセストークンを取得
+                    const tokenRequest = {
+                        scopes: ["User.Read"],
+                        account: response.account
+                    };
+
+                    msalInstance.acquireTokenSilent(tokenRequest)
+                        .then((tokenResponse) => {
+                            console.log("Access Token:", tokenResponse.accessToken);
+                            document.getElementById("status").innerText = "Authentication successful!";
+                            document.getElementById("result").innerText = JSON.stringify(tokenResponse, null, 2);
+                        })
+                        .catch((error) => {
+                            console.error("Error acquiring token silently:", error);
+                            document.getElementById("status").innerText = "Error acquiring token.";
+                        });
+                } else {
+                    document.getElementById("status").innerText = "No response from redirect.";
+                }
+            })
+            .catch((error) => {
+                console.error("Error handling redirect promise:", error);
+                document.getElementById("status").innerText = "Error during redirect handling.";
+            });
+    </script>
+</head>
+<body>
+    <h1>Processing Authentication...</h1>
+    <p id="status">Processing...</p>
+    <pre id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></pre>
+</body>
+</html>
