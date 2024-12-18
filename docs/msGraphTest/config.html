@@ -18,10 +18,25 @@
     </form>
 
     <script>
+        // クッキーを取得する関数
+        function getCookie(name) {
+            const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+            return matches ? decodeURIComponent(matches[1]) : '';
+        }
+
         // クッキーを設定する関数
         function setCookie(name, value) {
             document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
         }
+
+        // フォーム初期化：クッキーから値をセット
+        window.onload = function() {
+            const clientIdField = document.getElementById("clientId");
+            const tenantIdField = document.getElementById("tenantId");
+
+            clientIdField.value = getCookie("clientId");
+            tenantIdField.value = getCookie("tenantId");
+        };
 
         // フォームの送信イベントを監視
         document.getElementById("idForm").addEventListener("submit", function(event) {
