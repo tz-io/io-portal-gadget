@@ -1,11 +1,65 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MS Graph API Sample</title>
     <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
-  </head>
-  <body>
     <script>
-alert('AAAAA'):      
+        // MSAL Configuration
+        const msalConfig = {
+            auth: {
+                clientId: "YOUR_CLIENT_ID", // Azureポータルで取得したクライアントID
+                authority: "https://login.microsoftonline.com/common", // 認証のためのエンドポイント
+                redirectUri: "http://localhost" // サーバーが不要でも動作するリダイレクトURI
+            }
+        };
+
+        // MSALインスタンスを作成
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        // MS Graph API エンドポイント
+        const graphConfig = {
+            graphMeEndpoint: "https://graph.microsoft.com/v1.0/me"
+        };
+
+        // サインインしてトークンを取得
+        async function signInAndFetchData() {
+            try {
+                // サインイン処理（ポップアップ方式）
+                const loginResponse = await msalInstance.loginPopup({
+                    scopes: ["User.Read"] // 必要なスコープ
+                });
+                console.log("id_token acquired:", loginResponse);
+
+                // アクセストークンの取得
+                const tokenResponse = await msalInstance.acquireTokenSilent({
+                    scopes: ["User.Read"],
+                    account: loginResponse.account
+                });
+                const accessToken = tokenResponse.accessToken;
+                console.log("Access Token acquired:", accessToken);
+
+                // MS Graph API呼び出し
+                const graphResponse = await fetch(graphConfig.graphMeEndpoint, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                const userData = await graphResponse.json();
+                console.log("Graph API Response:", userData);
+
+                // ユーザー情報を表示
+                document.getElementById("result").innerText = JSON.stringify(userData, null, 2);
+            } catch (error) {
+                console.error("Error during sign-in or data fetching:", error);
+            }
+        }
     </script>
-  </body>
+</head>
+<body>
+    <h1>MS Graph API Sample</h1>
+    <button onclick="signInAndFetchData()">Sign In and Fetch Data</button>
+    <pre id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></pre>
+</body>
 </html>
