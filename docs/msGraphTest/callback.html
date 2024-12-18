@@ -6,12 +6,26 @@
     <title>Redirect Callback</title>
     <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
     <script>
+        // クッキーを取得する関数
+        function getCookie(name) {
+            const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+            return matches ? decodeURIComponent(matches[1]) : '';
+        }
+        
+        // フォーム初期化：クッキーから値をセット
+        window.onload = function() {
+            const clientIdField = document.getElementById("clientId");
+            const tenantIdField = document.getElementById("tenantId");
+
+            clientIdField.value = getCookie("clientId");
+            tenantIdField.value = getCookie("tenantId");
+        };        
         // MSAL Configuration
         const msalConfig = {
             auth: {
-                clientId: "YOUR_CLIENT_ID", // Azureポータルで取得したクライアントID
+                clientId: clientIdField, // Azureポータルで取得したクライアントID
                 authority: "https://login.microsoftonline.com/common", // 必要に応じてテナントIDを含む
-                redirectUri: "https://tz-io.github.io/io-portal-gadget/docs/msGraphTest/" // リダイレクトURI
+                redirectUri: "https://tz-io.github.io/io-portal-gadget/docs/msGraphTest/callback.html" // リダイレクトURI
             }
         };
 
