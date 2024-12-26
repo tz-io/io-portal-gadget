@@ -83,11 +83,19 @@
                 // メッセージを画面に表示
                 const resultElement = document.getElementById("result");
                 resultElement.innerHTML = "";
+                const tableElement = document.createElement("table");
                 messages.forEach(message => {
-                    const messageElement = document.createElement("p");
-                    messageElement.textContent = `[${message.from?.user?.displayName || "Unknown"}]: ${message.body.content}`;
-                    resultElement.appendChild(messageElement);
+                    const speakerElement = document.createElement("td");
+                    const messageElement = document.createElement("td");
+                    speakerElement.innerHTML = ${message.from?.user?.displayName || "Unknown"};
+                    /** messageElement.textContent = `[${message.from?.user?.displayName || "Unknown"}]: ${message.body.content}`; **/
+                    messageElement.innerHTML = ${message.body.content}`;
+                    const tableRowElement = document.createElement("tr");
+                    tableRowElement.appendChild(speakerElement);
+                    tableRowElement.appendChild(messageElement);
+                    tableElement.appendChild(tableRowElement);
                 });
+                resultElement.appendChild(tableElement);
             } catch (error) {
                 console.error("Error during sign-in or fetching messages:", error);
                 alert("エラーが発生しました。詳細はコンソールを確認してください。");
