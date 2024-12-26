@@ -87,9 +87,9 @@
                 messages.forEach(message => {
                     const speakerElement = document.createElement("td");
                     const messageElement = document.createElement("td");
-                    speakerElement.innerHTML = ${message.from?.user?.displayName || "Unknown"};
+                    speakerElement.innerHTML = `${message.from?.user?.displayName || "Unknown"}`;
                     /** messageElement.textContent = `[${message.from?.user?.displayName || "Unknown"}]: ${message.body.content}`; **/
-                    messageElement.innerHTML = ${message.body.content}`;
+                    messageElement.innerHTML = `${message.body.content}`;
                     const tableRowElement = document.createElement("tr");
                     tableRowElement.appendChild(speakerElement);
                     tableRowElement.appendChild(messageElement);
