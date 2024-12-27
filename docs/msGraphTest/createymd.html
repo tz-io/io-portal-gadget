@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS Graph API Sample</title>
+    <script src="https://alcdn.msauth.net/browser/2.33.0/js/msal-browser.min.js"></script>
+    <script>
+        // Cookieから値を取得する関数
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // MSALインスタンスとGraph API設定を初期化する関数
+        function initializeMSAL() {
+            const clientId = getCookie("clientId");
+            const tenantId = getCookie("tenantId");
+
+            if (!clientId || !tenantId) {
+                alert("クライアントIDまたはテナントIDがCookieに存在しません。");
+                throw new Error("Missing clientId or tenantId in cookies.");
+            }
+
+            // MSAL Configuration
+            return new msal.PublicClientApplication({
+                auth: {
+                    clientId: clientId,
+                    authority: `https://login.microsoftonline.com/${tenantId}`,
+                    redirectUri: "https://tz-io.github.io/io-portal-gadget/docs/msGraphTest/callback.html"
+                }
+            });
+        }
+
+        // SharePointのドキュメントライブラリにフォルダを作成する関数
+        async function createSharePointFolder(accessToken, siteId, listId, folderName) {
+            try {
+                const graphResponse = await fetch(`https://graph.microsoft.com/v1.0/sites/${siteId}/drives/${listId}/root/children`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: folderName,
+                        folder: {},
+                        "@microsoft.graph.conflictBehavior": "rename"
+                    })
+                });
+
+                if (!graphResponse.ok) {
+                    throw new Error(`HTTP error! status: ${graphResponse.status}`);
+                }
+
+                const responseData = await graphResponse.json();
+                console.log("Folder created:", responseData);
+                return responseData;
+            } catch (error) {
+                console.error("Error creating folder:", error);
+                throw error;
+            }
+        }
+
+        // 認証とデータ取得のメイン処理
+        async function signInAndFetchMessages() {
+            try {
+                const msalInstance = initializeMSAL();
+
+                // サインイン処理
+                const loginResponse = await msalInstance.loginPopup({
+                    scopes: ["User.Read", "Chat.Read", "Sites.ReadWrite.All"] // 必要スコープ
+                });
+                console.log("id_token acquired:", loginResponse);
+
+                // アクセストークン取得
+                const tokenResponse = await msalInstance.acquireTokenSilent({
+                    scopes: ["User.Read", "Chat.Read", "Sites.ReadWrite.All"],
+                    account: loginResponse.account
+                });
+                const accessToken = tokenResponse.accessToken;
+                console.log("Access Token acquired:", accessToken);
+
+                // フォルダ作成処理
+                const folderName = document.getElementById("new_folder_name").value;
+                if (!folderName) {
+                    alert("フォルダ名を入力してください。");
+                    return;
+                }
+
+                const siteId = "<Your_Site_Id>"; // SharePointのサイトID
+                const listId = "<Your_List_Id>"; // ドキュメントライブラリID
+
+                const folderResponse = await createSharePointFolder(accessToken, siteId, listId, folderName);
+                document.getElementById("result").textContent = `Folder created: ${folderResponse.name}`;
+            } catch (error) {
+                console.error("Error during sign-in or fetching messages:", error);
+                alert("エラーが発生しました。詳細はコンソールを確認してください。");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>MS Graph API: Fetch Chat Messages</h1>
+    <input type="text" id="new_folder_name" placeholder="Enter folder name"></input>
+    <button onclick="signInAndFetchMessages()">Sign In and Create Folder</button>
+    <div id="result" style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd;"></div>
+</body>
+</html>
