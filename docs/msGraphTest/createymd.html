@@ -89,8 +89,8 @@
                     return;
                 }
 
-                const siteId = "<Your_Site_Id>"; // SharePointのサイトID
-                const listId = "<Your_List_Id>"; // ドキュメントライブラリID
+                const siteId = "xio"; // SharePointのサイトID
+                const listId = "60aa0b78-9ff2-4136-8d12-c079192da2bd"; // ドキュメントライブラリID
 
                 const folderResponse = await createSharePointFolder(accessToken, siteId, listId, folderName);
                 document.getElementById("result").textContent = `Folder created: ${folderResponse.name}`;
