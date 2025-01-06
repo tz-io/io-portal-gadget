@@ -13,6 +13,12 @@
             if (parts.length === 2) return parts.pop().split(';').shift();
             return null;
         }
+        
+        // URL パラメータから指定のキーを取得する関数
+        function getUrlParameter(paramName) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(paramName);
+        }
 
         // MSALインスタンスとGraph API設定を初期化する関数
         function initializeMSAL() {
@@ -74,8 +80,12 @@
                 const accessToken = tokenResponse.accessToken;
                 console.log("Access Token acquired:", accessToken);
 
-                // チャットID
-                const chatId = "19%3Aae947f62d8304c2ebf4d949f6b401388%40thread.tacv2";
+                // URL パラメータからチャットIDを取得
+                const chatId = getUrlParameter("chatid");
+                if (!chatId) {
+                    alert("URL に chatid パラメータが指定されていません。");
+                    throw new Error("Missing chatid in URL parameters.");
+                }
 
                 // チャットメッセージを取得
                 const messages = await fetchChatMessages(accessToken, chatId);
